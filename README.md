@@ -84,6 +84,10 @@ First-run launch message content is stored at:
 
 - `config/personas/shennell_first_run_message.txt`
 
+## Architecture
+
+Full system design documentation is in [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## License
 
 MIT License.  
