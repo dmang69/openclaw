@@ -18,6 +18,9 @@ class MainSmokeTest(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0)
         self.assertIn("openclaw started", result.stdout)
+        self.assertIn("agent=strategist", result.stdout)
+        self.assertIn("persona=shennell", result.stdout)
+        self.assertIn("log_mode=judicial", result.stdout)
 
 
 if __name__ == "__main__":

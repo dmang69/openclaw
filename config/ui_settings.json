@@ -1,7 +1,7 @@
 {
   "theme": "dark",
   "logging_mode": "judicial",
-  "default_persona": "Shennell",
+  "default_persona": "shennell",
   "evidence_viewer": {
     "show_hashes": true,
     "show_metadata": true

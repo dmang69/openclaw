@@ -34,26 +34,21 @@ This prevents complexity creep and preserves structural integrity.
 ```
 root/
   config/
-  personas/
-  skills/
-  agents/
+  installer/
   logs/
-  data/
   runtime/
-  your_entrypoint.py
+  main.py
 ```
 
 Each directory has a single responsibility:
 
 | Directory | Responsibility |
 |-----------|---------------|
-| `config/` | System settings, agent definitions, logging modes |
-| `personas/` | Persona "souls," including Shennell |
-| `skills/` | Modular capabilities (search, indexing, analysis, etc.) |
-| `agents/` | Agent logic, planners, and loops |
+| `config/` | System settings, UI settings, and persona first-run content |
+| `installer/` | Installer copy and packaging-facing UX text |
 | `logs/` | Audit-ready chronological logs |
-| `data/` | Evidence, documents, user-provided materials |
 | `runtime/` | Ephemeral state, caches, temporary artifacts |
+| `main.py` | Deterministic local entrypoint and CLI runtime |
 
 ---
 
@@ -218,7 +213,7 @@ The system supports:
 
 | Method | Description |
 |--------|-------------|
-| Source execution | `python your_entrypoint.py` |
+| Source execution | `python main.py` |
 | Windows 11 `.exe` | PyInstaller self-contained build |
 | Automated builds | GitHub Actions on tagged releases |
 | Installer packaging | Inno Setup |
@@ -242,7 +237,7 @@ m13thco-agent.exe
 or
 
 ```bash
-python your_entrypoint.py
+python main.py
 ```
 
 The system initializes:
@@ -268,7 +263,7 @@ m13thco-agent.exe --agent strategist
 or
 
 ```bash
-python your_entrypoint.py --agent strategist
+python main.py --agent strategist
 ```
 
 Agents operate in deterministic loops: Observe → Plan → Act → Reflect → Transition → Log.
