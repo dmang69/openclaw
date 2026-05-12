@@ -1162,3 +1162,279 @@ flowchart TD
 - No persona violations
 - No evidence modification
 - No unlogged transformations
+
+---
+
+## OPTION G — FULL DOCUMENTATION SITE BUILDOUT
+
+This section defines the landing page, sidebar, templates, versioning, contribution workflows, and release notes structure for a deterministic documentation system.
+
+### 1. Landing Page
+
+#### Sections
+
+- Hero: “Deterministic, Local-First Intelligence”
+- Quickstart
+- Architecture Overview
+- Personas
+- Evidence & Chronology
+- Developer Guide
+- Download
+
+#### Tone
+
+- Precise
+- Structured
+- Zero hype
+- Zero ambiguity
+
+### 2. Sidebar Structure
+
+```text
+Introduction
+  Overview
+  Philosophy of Controlled Force
+
+Getting Started
+  Installation
+  Onboarding Wizard
+  Running Agents
+
+Architecture
+  System Layout
+  Personas
+  Agents
+  Skills
+  Evidence & Chronology
+  Logging
+
+Usage
+  Workflows
+  Legal Mode
+  Automation Mode
+
+Developer Guide
+  Coding Standards
+  Testing
+  Extending the System
+
+Reference
+  CLI
+  Config
+  Personas
+  Skills
+  Error Codes
+
+Operations
+  Deployment
+  Backups
+  Security
+
+Releases
+  Changelog
+  Versioning
+```
+
+### 3. Section Templates
+
+#### Template: Concept Page
+
+```markdown
+# Title
+
+## Purpose
+Clear, single-sentence definition.
+
+## Structure
+List of components.
+
+## Rules
+Non-negotiable constraints.
+
+## Examples
+Minimal, deterministic examples.
+```
+
+#### Template: API Page
+
+```markdown
+# API Name
+
+## Signature
+Function signature or CLI usage.
+
+## Inputs
+Explicit list.
+
+## Outputs
+Explicit list.
+
+## Constraints
+Persona, determinism, evidence rules.
+
+## Failure Modes
+Enumerated, explicit.
+```
+
+### 4. Versioning Strategy
+
+- Semantic versioning
+- MAJOR = breaking
+- MINOR = new features
+- PATCH = fixes
+
+Versioned docs paths:
+
+- `/docs/v1.0/`
+- `/docs/v1.1/`
+- `/docs/latest/`
+
+### 5. Contribution Workflows
+
+#### Pull Request Requirements
+
+- Determinism audit
+- Persona compliance
+- Evidence safety
+- Full test suite passing
+- Structured commit messages
+
+#### Review Stages
+
+- Structural
+- Persona
+- Determinism
+- Evidence
+- Integration
+
+### 6. Release Notes Structure
+
+```markdown
+# Version X.Y.Z — YYYY-MM-DD
+
+## Added
+- New features
+
+## Changed
+- Behavior changes
+
+## Fixed
+- Bug fixes
+
+## Removed
+- Deprecated or removed features
+
+## Notes
+- Persona or evidence implications
+```
+
+---
+
+## OPTION H — DETERMINISTIC EXECUTION CONTRACT (DEC)
+
+A formal, enforceable contract that governs every execution, every agent, every persona, and every transformation. This is the backbone of reliability.
+
+### 1. Purpose of the DEC
+
+To guarantee:
+
+- Deterministic behavior
+- Evidence integrity
+- Persona compliance
+- Traceability
+- Reproducibility
+
+Across every run, every agent, every skill.
+
+### 2. DEC Structure
+
+#### 2.1 Execution Inputs
+
+- Must be explicit
+- Must be logged
+- Must be hashable
+
+#### 2.2 Execution Outputs
+
+- Must be deterministic
+- Must be reproducible
+- Must be traceable to inputs
+
+#### 2.3 Execution Boundaries
+
+- Persona constraints
+- Evidence constraints
+- System constraints
+
+#### 2.4 Execution Logs
+
+- Mandatory
+- Immutable
+- Structured
+
+#### 2.5 Execution Failure Modes
+
+- Ambiguity → halt
+- Contradiction → refuse
+- Missing evidence → stop
+- Boundary violation → deny
+
+### 3. DEC Enforcement Mechanism
+
+#### Runtime checks
+
+- Persona gate
+- Evidence gate
+- Determinism gate
+- Logging gate
+
+#### Build-time checks
+
+- Determinism audit
+- Persona compliance tests
+- Evidence integrity tests
+
+#### CI checks
+
+- Reproducibility tests
+- Hash consistency tests
+
+### 4. DEC Output Schema
+
+```json
+{
+  "execution_id": "exec-2026-05-12-001",
+  "input_hash": "abc123...",
+  "output_hash": "def456...",
+  "persona": "Shennell",
+  "agent": "strategist",
+  "skills_used": ["index", "analyze", "chronology"],
+  "logs": ["log-001", "log-002"],
+  "status": "success"
+}
+```
+
+### 5. DEC Failure Schema
+
+```json
+{
+  "execution_id": "exec-2026-05-12-002",
+  "status": "failure",
+  "failure_type": "persona_violation",
+  "reason": "Forbidden action: speculative inference",
+  "timestamp": "2026-05-12T16:40:00Z"
+}
+```
+
+### 6. DEC Doctrine (Shennell)
+
+A system without a contract is a system without form.  
+The Deterministic Execution Contract is the boundary that prevents collapse.
+
+If an action cannot satisfy the contract, it must not proceed.  
+If a transformation cannot be logged, it must not occur.  
+If a result cannot be reproduced, it is not a result.
+
+The contract is the structure.  
+The structure is the integrity.  
+The integrity is the system.
