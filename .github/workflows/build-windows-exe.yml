@@ -5,6 +5,9 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: read
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -24,16 +27,31 @@ jobs:
           if (Test-Path requirements.txt) { pip install -r requirements.txt }
           pip install pyinstaller
 
+      - name: Detect Python entrypoint
+        run: |
+          $entrypoint = Get-ChildItem -Path . -Recurse -File -Filter "*.py" `
+            | Where-Object { $_.FullName -notmatch "\\(\.venv|venv|site-packages|tests?)\\" } `
+            | Select-Object -First 1
+          if (-not $entrypoint) {
+            Write-Error "No Python entrypoint found. Add an entrypoint script before tagging a release."
+            exit 1
+          }
+          "ENTRYPOINT=$($entrypoint.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
       - name: Build executable
         run: |
-          if (Test-Path your_entrypoint.py) {
-            pyinstaller --onefile --noconsole your_entrypoint.py
-          } else {
-            Write-Error "Replace 'your_entrypoint.py' with your actual entrypoint file."
-          }
+          pyinstaller --onefile --noconsole "$env:ENTRYPOINT"
+
+      - name: Generate SHA-256 hash file
+        run: |
+          Get-FileHash dist\*.exe -Algorithm SHA256 `
+            | ForEach-Object { "$($_.Hash.ToLower()) *$($_.Path | Split-Path -Leaf)" } `
+            | Set-Content dist\SHA256SUMS.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-exe
-          path: dist/*.exe
+          path: |
+            dist/*.exe
+            dist/SHA256SUMS.txt

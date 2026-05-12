@@ -27,7 +27,7 @@ This installation path is designed for environments where auditability, predicta
 
 ## Releases
 
-Each release includes a Windows 11 `.exe` installer and supporting artifacts. Builds are versioned, signed, and packaged for deterministic local execution.
+Each release includes a Windows 11 `.exe` installer and supporting artifacts. Builds are versioned and packaged for deterministic local execution.
 
 ### Included in Each Release
 
