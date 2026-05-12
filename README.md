@@ -47,6 +47,8 @@ Users who require reliability should remain on the **Stable** channel.
 
 ## Installer Welcome Message (Shennell Voice)
 
+Shennell is the default installer persona voice used by this project.
+
 Welcome. I am Shennell.  
 You are installing a system built on constraint, clarity, and accountability.  
 I do not rely on external services. I do not guess. I do not wander.  

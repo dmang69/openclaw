@@ -43,10 +43,15 @@ jobs:
             }
           }
           if (-not $entrypoint) {
-            $entrypoint = Get-ChildItem -Path . -Recurse -File -Filter "*.py" `
+            $candidates = Get-ChildItem -Path . -Recurse -File -Filter "*.py" `
               | Where-Object { $_.FullName -notmatch "\\(\.venv|venv|site-packages|tests?)\\" } `
-              | Sort-Object FullName `
-              | Select-Object -First 1
+              | Sort-Object FullName
+            if ($candidates.Count -gt 1) {
+              $names = $candidates | ForEach-Object { $_.FullName }
+              Write-Error "Multiple Python files found. Set repository variable WINDOWS_ENTRYPOINT to choose one.`n$($names -join "`n")"
+              exit 1
+            }
+            $entrypoint = $candidates | Select-Object -First 1
           }
           if (-not $entrypoint) {
             Write-Error "No Python entrypoint found. Add an entrypoint script before tagging a release."
