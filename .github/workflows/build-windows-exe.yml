@@ -11,6 +11,8 @@ permissions:
 jobs:
   build-windows:
     runs-on: windows-latest
+    env:
+      ENTRYPOINT_OVERRIDE: ${{ vars.WINDOWS_ENTRYPOINT }}
 
     steps:
       - name: Checkout repository
@@ -29,9 +31,23 @@ jobs:
 
       - name: Detect Python entrypoint
         run: |
-          $entrypoint = Get-ChildItem -Path . -Recurse -File -Filter "*.py" `
-            | Where-Object { $_.FullName -notmatch "\\(\.venv|venv|site-packages|tests?)\\" } `
-            | Select-Object -First 1
+          if ($env:ENTRYPOINT_OVERRIDE -and (Test-Path $env:ENTRYPOINT_OVERRIDE)) {
+            $entrypoint = Get-Item $env:ENTRYPOINT_OVERRIDE
+          } else {
+            $conventionalFiles = @("main.py", "app.py", "__main__.py")
+            foreach ($candidate in $conventionalFiles) {
+              if (Test-Path $candidate) {
+                $entrypoint = Get-Item $candidate
+                break
+              }
+            }
+          }
+          if (-not $entrypoint) {
+            $entrypoint = Get-ChildItem -Path . -Recurse -File -Filter "*.py" `
+              | Where-Object { $_.FullName -notmatch "\\(\.venv|venv|site-packages|tests?)\\" } `
+              | Sort-Object FullName `
+              | Select-Object -First 1
+          }
           if (-not $entrypoint) {
             Write-Error "No Python entrypoint found. Add an entrypoint script before tagging a release."
             exit 1
