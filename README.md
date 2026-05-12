@@ -86,7 +86,7 @@ First-run launch message content is stored at:
 
 ## Architecture
 
-Full system design documentation is in [ARCHITECTURE.md](ARCHITECTURE.md).
+Full system design, usage, operations reference, and architecture diagrams are in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## License
 

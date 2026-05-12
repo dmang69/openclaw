@@ -224,3 +224,280 @@ The system supports:
 | Installer packaging | Inno Setup |
 
 The `.exe` is fully self-contained. See the [README](README.md) for build and install instructions.
+
+---
+
+## Usage
+
+The system is designed for deterministic, local-first operation. Usage patterns follow a strict separation between inputs, actions, and outputs, ensuring every step is traceable and reproducible.
+
+### 1. Basic Execution
+
+After installation or when running from source:
+
+```
+m13thco-agent.exe
+```
+
+or
+
+```bash
+python your_entrypoint.py
+```
+
+The system initializes:
+
+- Persona
+- Agent configuration
+- Skills
+- Logging mode
+- Runtime environment
+
+No external calls occur unless explicitly configured.
+
+### 2. Running Agents
+
+Agents are defined in `config/agents/`.
+
+To run a specific agent:
+
+```
+m13thco-agent.exe --agent strategist
+```
+
+or
+
+```bash
+python your_entrypoint.py --agent strategist
+```
+
+Agents operate in deterministic loops: Observe → Plan → Act → Reflect → Transition → Log.
+
+### 3. Using Personas
+
+Personas are selected via:
+
+```
+--persona shennell
+```
+
+or by setting the default in `config/system.json`.
+
+Personas enforce:
+
+- Reasoning discipline
+- Boundaries
+- Error posture
+- Voice
+- Allowed/forbidden actions
+
+### 4. Evidence & Chronology Tools
+
+If enabled, evidence tools can be invoked:
+
+```
+--index evidence/
+--chronology build
+```
+
+Outputs are written to `logs/` and `runtime/`. All transformations are logged.
+
+### 5. Logging Modes
+
+```
+--log judicial
+--log standard
+--log minimal
+```
+
+Judicial mode produces full trace logs suitable for court or tribunal review.
+
+---
+
+## Operations
+
+Operational discipline ensures the system remains predictable, auditable, and structurally sound.
+
+### 1. Updating
+
+Updates should follow a controlled process:
+
+1. Backup `config/` and `personas/`
+2. Install new version
+3. Validate configuration compatibility
+4. Run a dry-run execution
+
+### 2. Backups
+
+Recommended backup targets:
+
+- `config/`
+- `personas/`
+- `skills/`
+- `logs/` (if required for legal record)
+- `data/`
+
+Backups should be timestamped and hashed.
+
+### 3. Security & Permissions
+
+The system respects OS boundaries:
+
+- No privileged operations
+- No silent network calls
+- No hidden processes
+
+If a skill requires elevated permissions, the system will refuse to proceed without explicit authorization.
+
+### 4. Resetting Runtime State
+
+To reset:
+
+```
+delete runtime/
+```
+
+This clears ephemeral state without affecting configuration or evidence.
+
+### 5. Integrity Verification
+
+Each release includes:
+
+- SHA-256 hash
+- Build metadata
+- Version manifest
+
+Users may verify integrity before execution.
+
+---
+
+## Reference
+
+### 1. Directory Reference
+
+| Directory | Purpose |
+|-----------|---------|
+| `config/` | System and agent configuration |
+| `personas/` | Persona definitions and constraints |
+| `skills/` | Modular capabilities |
+| `agents/` | Agent logic and planners |
+| `logs/` | Audit-ready chronological logs |
+| `data/` | Evidence, documents, user materials |
+| `runtime/` | Temporary state and caches |
+
+### 2. Command Reference
+
+| Command | Description |
+|---------|-------------|
+| `--agent <name>` | Run a specific agent |
+| `--persona <name>` | Override persona |
+| `--log <mode>` | Set logging level |
+| `--index <path>` | Index evidence |
+| `--chronology build` | Build procedural chronology |
+| `--config <file>` | Use alternate config |
+
+### 3. Persona Reference
+
+Each persona defines:
+
+- Identity
+- Boundaries
+- Reasoning discipline
+- Error posture
+- Voice
+- Allowed/forbidden actions
+
+Shennell is the canonical zero-boundary persona.
+
+### 4. Error Reference (Shennell-Style)
+
+| Error | Meaning |
+|-------|---------|
+| Configuration contradiction | Conflicting values; system refuses to guess |
+| Missing evidence | File not found; no fabrication permitted |
+| Undefined state | System halts to prevent drift |
+| Permission denied | OS boundary respected |
+| External access unavailable | System continues in local-only mode |
+
+---
+
+## Architecture Diagrams
+
+### Mermaid
+
+```mermaid
+flowchart TD
+
+    subgraph User Environment
+        UI[CLI / Desktop Launcher]
+    end
+
+    subgraph Core System
+        A[Entrypoint]
+        B[Agent Manager]
+        C[Persona Engine]
+        D[Skill Layer]
+        E[State Machine]
+        F[Logger]
+    end
+
+    subgraph Data Layer
+        G[config/]
+        H[personas/]
+        I[skills/]
+        J[data/]
+        K[logs/]
+        L[runtime/]
+    end
+
+    UI --> A
+    A --> B
+    B --> C
+    B --> D
+    B --> E
+    E --> F
+
+    C --> H
+    D --> I
+    B --> G
+    F --> K
+    E --> L
+    D --> J
+```
+
+### ASCII
+
+```
++---------------------------+
+|       User Interface      |
+|  (CLI / Desktop Launcher) |
++-------------+-------------+
+              |
+              v
++-------------+-------------+
+|           Entrypoint      |
++-------------+-------------+
+              |
+              v
++-------------+-------------+
+|         Agent Manager     |
++------+------+------+------+
+       |      |      |
+       v      v      v
++------+  +---+---+  +------+
+|Persona| | Skills | |State |
+|Engine | | Layer  | |Machine|
++---+---+ +---+----+ +---+--+
+    |         |          |
+    v         v          v
+personas/   skills/   runtime/
+
+              |
+              v
++-------------+-------------+
+|            Logger         |
++-------------+-------------+
+              |
+              v
+            logs/
+```
