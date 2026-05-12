@@ -27,11 +27,15 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+Replace `<repo>` with your repository URL or local repository path.
+
 ### Running in Development Mode
 
 ```bash
 python your_entrypoint.py --dev
 ```
+
+Replace `your_entrypoint.py` with the actual project entrypoint filename.
 
 Development mode enables:
 

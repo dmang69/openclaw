@@ -60,6 +60,8 @@ pip install -r requirements.txt
 python your_entrypoint.py
 ```
 
+Replace `your_entrypoint.py` with your actual entrypoint file.
+
 ## Building the Windows `.exe`
 
 A GitHub Actions workflow automatically builds the `.exe` on tagged releases.

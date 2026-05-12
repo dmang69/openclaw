@@ -572,3 +572,162 @@ flowchart TD
 
     OM --> U
 ```
+
+---
+
+## Full Orchestration Spec
+
+### Goal
+
+Deterministically coordinate multiple agents (Strategist, Analyst, Indexer, Executor, etc.) under persona and evidence constraints, with full traceability.
+
+### Core Components
+
+- **Orchestration Manager (OM)**: central controller; receives requests, selects agents, enforces flow, and terminates runs.
+- **Routing Strategy (RS)**: deterministic mapping from input to agent sequence.
+- **Context Tracker (CT)**: maintains shared context (state, evidence references, persona constraints).
+- **Agents**: specialized workers with fixed roles and skills.
+- **Shared Services**: Persona Engine, Skill Layer, State Store, Logger.
+
+### High-Level Flow
+
+1. Receive request.
+2. Normalize and classify request type.
+3. Select initial agent via routing rules.
+4. Run deterministic agent loop (observe → plan → act → reflect → transition → log).
+5. Decide next agent or termination.
+6. Aggregate outputs and return.
+
+All decisions must be:
+
+- Deterministic
+- Logged
+- Persona-compliant
+
+### Agent-to-Agent Communication Protocol
+
+Agents never communicate through informal text only; they pass structured handoff objects via the orchestrator.
+
+**Handoff object**
+
+```json
+{
+  "from_agent": "strategist",
+  "to_agent": "analyst",
+  "intent": "analyze_plan",
+  "inputs": {
+    "plan": "...",
+    "constraints": ["no speculation", "evidence-bound"]
+  },
+  "context_ref": "ctx-2025-01-01T12:00:00Z-001"
+}
+```
+
+**Validation rules**
+
+- `to_agent` must exist.
+- Persona constraints must be respected.
+- Required evidence/context must be available.
+
+**Handoff logging requirements**
+
+- Timestamp
+- From/To
+- Intent
+- Context reference
+
+### Deterministic Routing Rules
+
+Routing is a pure function:
+
+```text
+route(request_type, state, persona) -> [agent_sequence]
+```
+
+Example rules:
+
+- `legal_chronology` → `[indexer, analyst, strategist]`
+- `evidence_index` → `[indexer]`
+- `plan_execution` → `[strategist, executor]`
+
+Constraints:
+
+- No randomness.
+- No fallback to arbitrary agents.
+- If no valid route exists, return explicit failure.
+
+### Persona Arbitration Logic
+
+When multiple agents operate under potentially different personas or constraints, arbitration decides which constraints dominate.
+
+Model:
+
+- **Global persona**: default (for example, Shennell) sets hard behavior ceiling.
+- **Agent persona**: local specialization must be a subset of global constraints.
+
+Arbitration rules:
+
+- If agent persona allows something global forbids → deny.
+- If global is silent and agent forbids → deny.
+- If ambiguity remains → halt and log persona conflict error.
+
+### Agent Lifecycle Diagram
+
+```mermaid
+flowchart TD
+
+    A[Start Agent] --> B[Load Persona & Config]
+    B --> C[Initialize State]
+    C --> D[Observe Input & Context]
+    D --> E[Plan Actions]
+    E --> F[Execute Skills]
+    F --> G[Update State]
+    G --> H[Log Step]
+    H --> I{Continue?}
+    I -->|Yes| D
+    I -->|No| J[Return Output & Final State]
+```
+
+### Multi-Agent Negotiation Diagram
+
+```mermaid
+sequenceDiagram
+    participant OM as Orchestration Manager
+    participant STR as Strategist
+    participant AN as Analyst
+    participant EX as Executor
+
+    OM->>STR: Initial request + constraints
+    STR-->>OM: Plan + required analysis
+    OM->>AN: Handoff(plan, constraints)
+    AN-->>OM: Analysis + risk flags
+    OM->>STR: Analysis result
+    STR-->>OM: Final plan + execution steps
+    OM->>EX: Execution request
+    EX-->>OM: Execution result + logs
+    OM-->>OM: Aggregate + validate
+    OM-->>User: Final structured output
+```
+
+### Failure-Mode Routing Diagram
+
+```mermaid
+flowchart TD
+
+    A[Request Received] --> B[Route to Initial Agent]
+    B --> C[Agent Execution]
+    C --> D{Success?}
+
+    D -->|Yes| E[Next Agent or Finish]
+    E --> F[Return Result]
+
+    D -->|No| G[Classify Failure]
+    G --> H{Recoverable?}
+
+    H -->|Yes| I[Route to Recovery Agent]
+    I --> C
+
+    H -->|No| J[Halt]
+    J --> K[Log Failure with Full Context]
+    K --> L[Return Structured Error]
+```
