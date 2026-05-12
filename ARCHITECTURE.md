@@ -731,3 +731,216 @@ flowchart TD
     J --> K[Log Failure with Full Context]
     K --> L[Return Structured Error]
 ```
+
+---
+
+## Option B — Evidence & Chronology System Expansion
+
+This section defines the judicial-grade evidence pipeline, the chronology engine, and the metadata + hashing standards that guarantee integrity, reproducibility, and admissibility.
+
+### 1. Full Chain-of-Custody Spec
+
+The chain-of-custody (CoC) model ensures every evidence item is:
+
+- Identified
+- Hashed
+- Logged
+- Immutable
+- Traceable across transformations
+
+#### 1.1 Evidence Intake Requirements
+
+| Field | Description |
+|-------|-------------|
+| `source_path` | Original file path |
+| `ingest_timestamp` | ISO-8601 timestamp |
+| `hash_sha256` | SHA-256 hash of raw bytes |
+| `file_type` | MIME or inferred type |
+| `size_bytes` | File size |
+| `provenance` | User-provided or system-derived |
+| `chain_id` | Unique chain-of-custody identifier |
+
+#### 1.2 Chain-of-Custody Record
+
+Stored as JSON:
+
+```json
+{
+  "chain_id": "coc-2026-05-12-001",
+  "events": [
+    {
+      "timestamp": "2026-05-12T16:37:00Z",
+      "action": "ingest",
+      "hash": "abc123...",
+      "actor": "system",
+      "notes": "Initial intake"
+    }
+  ]
+}
+```
+
+#### 1.3 Allowed CoC Actions
+
+- `ingest`
+- `verify_hash`
+- `parse`
+- `extract_metadata`
+- `index`
+- `chronology_reference`
+
+#### 1.4 Forbidden Actions
+
+- Modifying original evidence
+- Rewriting CoC history
+- Silent transformations
+- Hashing after modification
+
+### 2. Hashing + Metadata Schema
+
+#### 2.1 Hashing Standard
+
+- Algorithm: SHA-256
+- Input: raw bytes only
+- Output: hex string
+- Hash must be computed before any parsing
+
+#### 2.2 Metadata Schema
+
+```json
+{
+  "file_name": "exhibit_a.pdf",
+  "file_type": "application/pdf",
+  "size_bytes": 482993,
+  "hash_sha256": "abc123...",
+  "created": "2025-11-01T10:22:00Z",
+  "modified": "2025-11-01T10:22:00Z",
+  "extracted_text_length": 12933,
+  "pages": 14,
+  "source": "user_upload"
+}
+```
+
+#### 2.3 Metadata Integrity Rules
+
+- Metadata must never overwrite original file attributes
+- Extracted metadata must be logged separately
+- All derived fields must be marked as derived
+
+### 3. Chronology Extraction Rules
+
+The chronology engine transforms indexed evidence into a judicial-grade timeline.
+
+#### 3.1 Extraction Pipeline
+
+1. Parse evidence (PDF, email, text, image OCR).
+2. Identify temporal markers:
+   - Explicit dates
+   - Implicit dates (for example, “yesterday”) flagged for review
+3. Normalize timestamps to ISO-8601.
+4. Classify events:
+   - Communication
+   - Payment
+   - Notice
+   - Action
+   - Decision
+   - System event
+5. Rank events:
+   - Primary: explicit timestamp
+   - Secondary: inferred order
+6. Construct timeline:
+   - Sorted
+   - Deduplicated
+   - Cross-referenced
+
+#### 3.2 Rules of Evidence Interpretation
+
+- No speculative ordering
+- No inferred timestamps without explicit flags
+- Conflicts must be logged and surfaced
+- Ambiguous events must be quarantined
+
+#### 3.3 Chronology Output Schema
+
+```json
+{
+  "event_id": "evt-001",
+  "timestamp": "2025-03-14T09:30:00Z",
+  "source_file": "exhibit_a.pdf",
+  "source_hash": "abc123...",
+  "event_type": "communication",
+  "summary": "Email sent to landlord",
+  "confidence": "explicit"
+}
+```
+
+### 4. Judicial-Grade Transformation Logs
+
+Every transformation must produce a log entry with:
+
+| Field | Description |
+|-------|-------------|
+| `timestamp` | When transformation occurred |
+| `action` | `parse`, `extract`, `index`, `chronology_add` |
+| `input_hash` | Hash of input artifact |
+| `output_hash` | Hash of derived artifact |
+| `actor` | `system` or `user` |
+| `notes` | Explanation of transformation |
+
+#### 4.1 Example Log Entry
+
+```json
+{
+  "timestamp": "2026-05-12T16:40:00Z",
+  "action": "extract_metadata",
+  "input_hash": "abc123...",
+  "output_hash": "def456...",
+  "actor": "system",
+  "notes": "Extracted PDF metadata"
+}
+```
+
+#### 4.2 Logging Rules
+
+- Logs must be append-only
+- No silent transformations
+- No overwriting previous logs
+- Every derived artifact must have a hash
+
+### 5. Mermaid Diagram — Evidence Ingestion
+
+```mermaid
+flowchart TD
+
+    A[User Provides Evidence] --> B[Compute SHA-256 Hash]
+    B --> C[Record Chain-of-Custody Entry]
+    C --> D[Extract Metadata]
+    D --> E[Parse Content]
+    E --> F[Index Evidence]
+    F --> G[Write Logs]
+```
+
+### 6. Mermaid Diagram — Chronology Building
+
+```mermaid
+flowchart TD
+
+    A[Indexed Evidence] --> B[Extract Temporal Markers]
+    B --> C[Normalize Timestamps]
+    C --> D[Classify Events]
+    D --> E[Sort & Deduplicate]
+    E --> F[Cross-Reference Evidence]
+    F --> G[Generate Timeline]
+    G --> H[Write Chronology Log]
+```
+
+### 7. Mermaid Diagram — Cross-Reference Indexing
+
+```mermaid
+flowchart TD
+
+    A[Evidence Items] --> B[Extract Entities]
+    B --> C[Link Entities Across Files]
+    C --> D[Build Reference Graph]
+    D --> E[Attach Graph to Chronology]
+    E --> F[Write Cross-Reference Log]
+```
