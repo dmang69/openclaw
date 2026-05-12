@@ -88,6 +88,10 @@ First-run launch message content is stored at:
 
 Full system design, usage, operations reference, and architecture diagrams are in [ARCHITECTURE.md](ARCHITECTURE.md).
 
+## Developer Guide
+
+Contributor reference for environment setup, coding standards, testing, and extending the system: [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md).
+
 ## License
 
 MIT License.  
