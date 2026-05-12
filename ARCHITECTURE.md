@@ -944,3 +944,221 @@ flowchart TD
     D --> E[Attach Graph to Chronology]
     E --> F[Write Cross-Reference Log]
 ```
+
+---
+
+## OPTION F — PRODUCTIZATION LAYER
+
+Deterministic, Local-First, Persona-Aware Product Specification
+
+This section defines the desktop UI, onboarding wizard, settings schema, log viewer, evidence viewer, and agent dashboard for the system. Everything is aligned with core architectural principles: determinism, controlled force, auditability, and persona-safe operation.
+
+### 1. Desktop Application Specification
+
+#### 1.1 Product Goals
+
+- 100% local execution
+- Deterministic UI behavior
+- Persona-aware interface
+- Evidence-safe (no accidental modification)
+- Full traceability of user actions
+- Zero ambiguity in workflows
+
+#### 1.2 Application Layout
+
+```text
++--------------------------------------------------------------+
+| Sidebar (Navigation) | Main Panel (Active View)              |
+|                      |---------------------------------------|
+|                      | Agent Output / Evidence / Logs / UI   |
++--------------------------------------------------------------+
+```
+
+#### 1.3 Navigation Structure
+
+- Home
+- Agents
+- Evidence
+- Chronology
+- Logs
+- Settings
+- Personas
+
+#### 1.4 UI Interaction Rules
+
+- No hidden actions
+- No auto-saving without explicit confirmation
+- All transformations logged
+- Persona constraints visible and enforced
+- Evidence is always read-only
+
+### 2. Persona-Aware Onboarding Wizard
+
+A deterministic, step-based onboarding flow configures the system for the user’s domain and persona.
+
+#### 2.1 Step 1 — Persona Selection
+
+User chooses:
+
+- Shennell (zero-boundary, judicial discipline)
+- Analyst (structured, explanatory)
+- Builder (automation-focused)
+- Custom persona (advanced users)
+
+UI displays:
+
+- Boundaries
+- Allowed actions
+- Forbidden actions
+- Error posture
+
+#### 2.2 Step 2 — Domain Selection
+
+- Legal / Procedural
+- Automation / Engineering
+- Creative / Narrative
+- Mixed
+
+#### 2.3 Step 3 — Logging Mode
+
+- Judicial (full trace)
+- Standard
+- Minimal
+
+#### 2.4 Step 4 — Evidence Handling Preferences
+
+- Strict (no inferred timestamps)
+- Balanced
+- Developer (verbose)
+
+#### 2.5 Step 5 — Confirmation
+
+A full summary is displayed.  
+User must explicitly confirm before the system initializes.
+
+### 3. Settings Panel Specification
+
+Settings stored in `config/ui_settings.json`.
+
+#### 3.1 Schema
+
+```json
+{
+  "theme": "dark",
+  "logging_mode": "judicial",
+  "default_persona": "Shennell",
+  "evidence_viewer": {
+    "show_hashes": true,
+    "show_metadata": true
+  },
+  "agent_dashboard": {
+    "show_internal_state": false
+  }
+}
+```
+
+#### 3.2 Rules
+
+- Settings changes require explicit confirmation
+- No silent persistence
+- Persona constraints override UI settings when necessary
+
+### 4. Log Viewer Specification
+
+#### 4.1 Capabilities
+
+Filter by:
+
+- Timestamp
+- Agent
+- Persona
+- Event type
+- Evidence hash
+
+Additional capabilities:
+
+- Expand/collapse structured logs
+- Export logs (explicit user action only)
+
+#### 4.2 Non-negotiables
+
+- Logs cannot be edited
+- Logs cannot be deleted
+- No silent filtering
+- No “friendly summaries” that hide details
+
+### 5. Evidence Viewer Specification
+
+#### 5.1 Features
+
+- View metadata
+- View SHA-256 hash
+- View chain-of-custody
+- View parsed text
+- View chronology references
+- View entity cross-references
+
+#### 5.2 Forbidden
+
+- Editing evidence
+- Rewriting metadata
+- Modifying timestamps
+- Re-hashing modified files
+
+#### 5.3 Evidence Safety Rules
+
+- All evidence is read-only
+- All derived artifacts are hashed
+- All transformations logged
+
+### 6. Agent Dashboard Specification
+
+#### 6.1 Displays
+
+- Active agent
+- Persona constraints
+- Current state
+- Skill calls
+- Last output
+- Next planned action
+
+#### 6.2 Modes
+
+- User Mode: simplified
+- Developer Mode: full trace, internal state, skill call stack
+
+#### 6.3 Deterministic Behavior
+
+- Dashboard updates only on state transitions
+- No live streaming of partial reasoning
+- No hidden agent actions
+
+### 7. Productization Layer Architecture Diagram (Mermaid)
+
+```mermaid
+flowchart TD
+
+    A[Desktop App] --> B[Onboarding Wizard]
+    A --> C[Sidebar Navigation]
+    A --> D[Main Panel]
+
+    D --> E[Agent Dashboard]
+    D --> F[Evidence Viewer]
+    D --> G[Log Viewer]
+    D --> H[Settings Panel]
+
+    E --> I[Persona Engine]
+    F --> J[Evidence Index]
+    G --> K[Structured Logs]
+    H --> L[Config Files]
+```
+
+### 8. Productization Layer Non-Negotiables
+
+- No cloud dependencies
+- No silent updates
+- No nondeterministic UI behavior
+- No hidden state
+- No persona violations
+- No evidence modification
+- No unlogged transformations
