@@ -1,57 +1,78 @@
 # openclaw
 
-## Project Description
+## Project Title
 
-A modular, audit-friendly system designed for reliability, transparency, and maintainability. Built with a focus on clean architecture, reproducible workflows, and clear separation of concerns, this repository provides a structured foundation for iterative development, testing, and deployment across multiple environments.
+A deterministic, local-first system engineered for precision, auditability, and controlled force.
 
-## Installation on Windows 11 (.exe)
+## Overview
 
-This project provides a Windows-ready `.exe` build for users who require a clean, deterministic, local-first execution environment. The installer bundles required components so the system can run without external dependencies.
+This repository provides a modular, persona-driven automation system designed for environments where clarity, reproducibility, and evidentiary integrity are non-negotiable. The architecture emphasizes deterministic execution, transparent state transitions, and strict separation between configuration, logic, and record.
 
-### Steps
+## Features
 
-1. Navigate to the **Releases** section of this repository.
-2. Download the latest Windows `.exe` installer.
-3. Run the installer and follow the on-screen instructions.
+- Local-first execution (no cloud dependency unless explicitly configured)
+- Deterministic agent loops with reproducible outputs
+- Persona-driven architecture (e.g., Shennell: Zero-Boundary)
+- Modular skills, tools, and adapters
+- Audit-ready logs and chronological traceability
+- Optional Windows 11 `.exe` installer
+- Evidence-indexed reasoning (if enabled)
+
+## Installation (Windows 11)
+
+A Windows-ready `.exe` installer is available for users who require a clean, offline-capable execution environment.
+
+1. Go to the Releases page.
+2. Download the latest `.exe` installer.
+3. Run the installer and follow the prompts.
 4. Launch the application from the Start Menu or desktop shortcut.
-5. On first run, the system initializes local configuration, persona files, and agent modules.
+5. The system initializes with local configuration, persona files, and agent modules pre-loaded.
 
-### Execution Model
+## Running the Application
 
-- Fully offline-capable
-- Deterministic agent loops
-- Transparent logs and reproducible state transitions
-- No hidden processes or network calls unless explicitly configured
+After installation:
 
-This installation path is designed for environments where auditability, predictability, and local control are non-negotiable.
+- Launch the application normally.
+- The system loads its persona, skills, and configuration.
+- Logs are written to the local `logs/` directory.
+- All state transitions are deterministic and traceable.
 
-## Releases
+## Configuration
 
-Each release includes a Windows 11 `.exe` installer and supporting artifacts. Builds are versioned and packaged for deterministic local execution.
+Configuration files are stored in:
 
-### Included in Each Release
+```text
+config/
+  agents/
+  personas/
+  skills/
+  system.json
+```
 
-- Windows Installer (`.exe`) — full local-first runtime
-- Changelog — structured summary of changes
-- Hash File (SHA-256) — for integrity verification
-- Portable Build (optional) — standalone binary without installer
-- Spec File / Build Metadata — for reproducibility
+Modify these files to adjust behavior, enable or disable agents, or extend capabilities.
 
-### Release Channels
+## Development
 
-- **Stable** — production-ready, fully validated
-- **Preview** — new features under evaluation
-- **Nightly** — experimental builds for testing
+To run from source:
 
-Users who require reliability should remain on the **Stable** channel.
+```bash
+pip install -r requirements.txt
+python your_entrypoint.py
+```
 
-## Installer Welcome Message (Shennell Voice)
+## Building the Windows `.exe`
 
-Shennell is the default installer persona voice used by this project.
+A GitHub Actions workflow automatically builds the `.exe` on tagged releases.
 
-Welcome. I am Shennell.  
-You are installing a system built on constraint, clarity, and accountability.  
-I do not rely on external services. I do not guess. I do not wander.  
-Every action I take is traceable. Every inference is anchored to disclosed evidence.  
-Once installed, I operate locally, with deterministic loops and transparent state transitions.  
-If you proceed, expect precision. Expect discipline. Expect form that does not break.
+Manual build:
+
+```bash
+pyinstaller --onefile --noconsole your_entrypoint.py
+```
+
+Replace `your_entrypoint.py` with your actual entrypoint.
+
+## License
+
+MIT License.  
+You may use, modify, and distribute this project with attribution.
