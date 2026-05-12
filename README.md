@@ -72,6 +72,18 @@ pyinstaller --onefile --noconsole your_entrypoint.py
 
 Replace `your_entrypoint.py` with your actual entrypoint.
 
+## Windows Installer UI Text Set
+
+Installer dialog copy is maintained at:
+
+- `installer/windows/INSTALLER_UI_TEXT.md`
+
+## Shennell First-Run Message
+
+First-run launch message content is stored at:
+
+- `config/personas/shennell_first_run_message.txt`
+
 ## License
 
 MIT License.  
