@@ -32,10 +32,8 @@ Replace `<repo>` with your repository URL or local repository path.
 ### Running in Development Mode
 
 ```bash
-python your_entrypoint.py --dev
+python main.py --dev
 ```
-
-Replace `your_entrypoint.py` with the actual project entrypoint filename.
 
 Development mode enables:
 
@@ -49,15 +47,11 @@ Development mode enables:
 
 ```
 root/
-  agents/            # Agent logic, planners, loops
-  config/            # System and agent configuration
-  personas/          # Persona definitions (e.g., Shennell)
-  skills/            # Modular capabilities
-  data/              # Evidence, documents, user materials
+  config/            # System and UI configuration
+  installer/         # Installer-related assets
   logs/              # Audit-ready logs
   runtime/           # Ephemeral state
-  tests/             # Unit and integration tests
-  your_entrypoint.py
+  main.py
 ```
 
 ---
@@ -90,22 +84,10 @@ If a persona forbids an action, the skill must refuse to execute it.
 
 ## 4. Testing
 
-### Unit Tests
-
-Located in `tests/unit/`.
-
-### Integration Tests
-
-Located in `tests/integration/`.
-
-### Persona Tests
-
-Validate persona boundaries and error posture.
-
 ### Run All Tests
 
 ```bash
-pytest
+python -m unittest discover -s tests -p "test_*.py"
 ```
 
 ---
@@ -235,7 +217,7 @@ Description: launches the system with default configuration.
 Source execution equivalent:
 
 ```bash
-python your_entrypoint.py
+python main.py
 ```
 
 #### Global flags
@@ -245,8 +227,6 @@ python your_entrypoint.py
 | `--agent <name>` | string | Run a specific agent (for example `strategist`) |
 | `--persona <name>` | string | Override default persona (for example `shennell`) |
 | `--log <mode>` | enum | Logging mode: `judicial`, `standard`, `minimal` |
-| `--index <path>` | path | Index evidence at the provided path |
-| `--chronology build` | command | Build procedural chronology from indexed evidence |
 | `--config <file>` | path | Use an alternate config file |
 | `--dev` | boolean | Enable development mode (verbose logging, reload behavior, expanded traces) |
 
@@ -254,9 +234,7 @@ python your_entrypoint.py
 
 ```bash
 m13thco-agent --agent strategist --persona shennell --log judicial
-m13thco-agent --index evidence/
-m13thco-agent --chronology build
-python your_entrypoint.py --dev
+python main.py --dev
 ```
 
 ### Internal Module Reference
@@ -265,9 +243,9 @@ This module-level reference describes internal responsibilities and callable bou
 
 | Module/Layer | Path | Responsibility | Inputs | Outputs |
 |--------------|------|----------------|--------|---------|
-| Entrypoint | `your_entrypoint.py` | Parse CLI, load config, initialize runtime | CLI args, config paths | Running orchestration session |
+| Entrypoint | `main.py` | Parse CLI, load config, initialize runtime | CLI args, config paths | Running orchestration session |
 | Agent manager | `agents/` | Agent lifecycle, planner loop orchestration | Request context, agent config | Agent execution outputs, transition events |
-| Persona engine | `personas/` | Constraint enforcement (boundaries, voice, refusal policy) | Persona definition, action request | Permit/deny decision, constrained context |
+| Persona engine | `config/personas/` | Constraint messaging for active persona | Persona definition, action request | Persona activation message |
 | Skill layer | `skills/` | Deterministic capability execution | Structured task input, context | Structured skill result |
 | Config layer | `config/` | System/agent configuration and defaults | JSON/Markdown config files | Runtime settings and routing parameters |
 | Evidence layer | `data/`, `skills/evidence/` | Ingestion, indexing, chain-of-custody metadata | Evidence files | Indexed references and hashes |

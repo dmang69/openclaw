@@ -43,9 +43,8 @@ Configuration files are stored in:
 
 ```text
 config/
-  agents/
   personas/
-  skills/
+  ui_settings.json
   system.json
 ```
 
@@ -57,10 +56,8 @@ To run from source:
 
 ```bash
 pip install -r requirements.txt
-python your_entrypoint.py
+python main.py
 ```
-
-Replace `your_entrypoint.py` with your actual entrypoint file.
 
 ## Building the Windows `.exe`
 
@@ -69,10 +66,8 @@ A GitHub Actions workflow automatically builds the `.exe` on tagged releases.
 Manual build:
 
 ```bash
-pyinstaller --onefile --noconsole your_entrypoint.py
+pyinstaller --onefile --noconsole main.py
 ```
-
-Replace `your_entrypoint.py` with your actual entrypoint.
 
 ## Windows Installer UI Text Set
 

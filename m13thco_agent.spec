@@ -3,13 +3,12 @@
 block_cipher = None
 
 a = Analysis(
-    ['your_entrypoint.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
     datas=[
-        ('config/*', 'config'),
-        ('personas/*', 'personas'),
-        ('skills/*', 'skills'),
+        ('config', 'config'),
+        ('installer', 'installer'),
     ],
     hiddenimports=[],
     hookspath=[],

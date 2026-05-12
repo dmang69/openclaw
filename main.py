@@ -81,7 +81,7 @@ def build_context(args: argparse.Namespace) -> SessionContext:
 
 def write_session_log(context: SessionContext, system_config: dict[str, Any]) -> Path:
     LOGS_DIR.mkdir(exist_ok=True)
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     log_file = LOGS_DIR / f"session-{timestamp}.jsonl"
     event = {
         "event": "session_start",
