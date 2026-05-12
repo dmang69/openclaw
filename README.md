@@ -86,11 +86,11 @@ First-run launch message content is stored at:
 
 ## Architecture
 
-Full system design, usage, operations reference, and architecture diagrams are in [ARCHITECTURE.md](ARCHITECTURE.md).
+Full system design, usage, operations reference, and architecture diagrams (including multi-agent orchestration) are in [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Developer Guide
 
-Contributor reference for environment setup, coding standards, testing, and extending the system: [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md).
+Contributor reference for environment setup, coding standards, testing, system extension, and full API reference: [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md).
 
 ## License
 

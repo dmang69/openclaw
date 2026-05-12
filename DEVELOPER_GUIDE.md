@@ -215,3 +215,66 @@ sequenceDiagram
     end
     AgentManager-->>User: Output
 ```
+
+---
+
+## Full API Reference (CLI-Level + Internal Modules)
+
+### CLI Interface
+
+#### Base command
+
+`m13thco-agent`
+
+Description: launches the system with default configuration.
+
+Source execution equivalent:
+
+```bash
+python your_entrypoint.py
+```
+
+#### Global flags
+
+| Flag | Type | Description |
+|------|------|-------------|
+| `--agent <name>` | string | Run a specific agent (for example `strategist`) |
+| `--persona <name>` | string | Override default persona (for example `shennell`) |
+| `--log <mode>` | enum | Logging mode: `judicial`, `standard`, `minimal` |
+| `--index <path>` | path | Index evidence at the provided path |
+| `--chronology build` | command | Build procedural chronology from indexed evidence |
+| `--config <file>` | path | Use an alternate config file |
+| `--dev` | boolean | Enable development mode (verbose logging, reload behavior, expanded traces) |
+
+#### Common invocation patterns
+
+```bash
+m13thco-agent --agent strategist --persona shennell --log judicial
+m13thco-agent --index evidence/
+m13thco-agent --chronology build
+python your_entrypoint.py --dev
+```
+
+### Internal Module Reference
+
+This module-level reference describes internal responsibilities and callable boundaries by directory.
+
+| Module/Layer | Path | Responsibility | Inputs | Outputs |
+|--------------|------|----------------|--------|---------|
+| Entrypoint | `your_entrypoint.py` | Parse CLI, load config, initialize runtime | CLI args, config paths | Running orchestration session |
+| Agent manager | `agents/` | Agent lifecycle, planner loop orchestration | Request context, agent config | Agent execution outputs, transition events |
+| Persona engine | `personas/` | Constraint enforcement (boundaries, voice, refusal policy) | Persona definition, action request | Permit/deny decision, constrained context |
+| Skill layer | `skills/` | Deterministic capability execution | Structured task input, context | Structured skill result |
+| Config layer | `config/` | System/agent configuration and defaults | JSON/Markdown config files | Runtime settings and routing parameters |
+| Evidence layer | `data/`, `skills/evidence/` | Ingestion, indexing, chain-of-custody metadata | Evidence files | Indexed references and hashes |
+| Chronology layer | `skills/chronology/` | Deterministic chronology extraction | Indexed evidence, ordering constraints | Chronology artifacts |
+| State store | `runtime/` | Ephemeral session state and caches | Session updates | Current state snapshots |
+| Logging layer | `logs/` | Audit-ready immutable traces | Inputs, outputs, transitions, errors | Chronological log records |
+
+### API Behavior Contract
+
+1. Deterministic execution for equivalent inputs and configuration.
+2. No hidden state transitions.
+3. Every skill call and state transition logged under selected log mode.
+4. Persona constraints enforced before prohibited actions.
+5. No external network calls unless explicitly configured.

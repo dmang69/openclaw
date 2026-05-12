@@ -501,3 +501,74 @@ personas/   skills/   runtime/
               v
             logs/
 ```
+
+---
+
+## Multi-Agent Orchestration Layer (Mermaid)
+
+```mermaid
+flowchart TD
+
+    subgraph User
+        U[User / Caller]
+    end
+
+    subgraph Orchestrator
+        OM[Orchestration Manager]
+        RS[Routing Strategy]
+        CT[Context Tracker]
+    end
+
+    subgraph Agents
+        A1[Agent: Strategist]
+        A2[Agent: Analyst]
+        A3[Agent: Indexer]
+        A4[Agent: Executor]
+    end
+
+    subgraph Shared Services
+        PE[Persona Engine]
+        SL[Skill Layer]
+        ST[State Store]
+        LG[Logger]
+    end
+
+    U --> OM
+    OM --> RS
+
+    RS --> A1
+    RS --> A2
+    RS --> A3
+    RS --> A4
+
+    A1 --> PE
+    A2 --> PE
+    A3 --> PE
+    A4 --> PE
+
+    A1 --> SL
+    A2 --> SL
+    A3 --> SL
+    A4 --> SL
+
+    A1 --> ST
+    A2 --> ST
+    A3 --> ST
+    A4 --> ST
+
+    A1 --> LG
+    A2 --> LG
+    A3 --> LG
+    A4 --> LG
+
+    OM --> CT
+    CT --> ST
+    CT --> LG
+
+    A1 --> OM
+    A2 --> OM
+    A3 --> OM
+    A4 --> OM
+
+    OM --> U
+```
