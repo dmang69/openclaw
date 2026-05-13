@@ -31,6 +31,9 @@ class AgentControls:
             "shennell": True,
             "analyst": True,
             "builder": True,
+            "strategist": True,
+            "indexer": True,
+            "executor": True,
         }
     )
     auto_routing: bool = True

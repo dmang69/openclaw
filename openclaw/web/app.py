@@ -88,8 +88,9 @@ def api_chat() -> Response:
                 "backend": agent.backend_name,
             }
         )
-    except Exception as exc:
-        return jsonify({"error": str(exc)}), 500
+    except Exception:
+        logger.exception("Chat endpoint error (persona=%s)", persona_name)
+        return jsonify({"error": "An internal error occurred. Check server logs."}), 500
 
 
 @app.route("/api/chat/reset", methods=["POST"])
@@ -134,8 +135,9 @@ def api_control_set() -> Response:
 
     try:
         updated = ControlSurface.from_dict(merged)
-    except Exception as exc:
-        return jsonify({"error": f"Invalid settings: {exc}"}), 400
+    except Exception:
+        logger.exception("Control surface update rejected")
+        return jsonify({"error": "Invalid settings. Check server logs for details."}), 400
 
     # Replace singleton
     import openclaw.control.surface as _cs_mod
@@ -219,14 +221,22 @@ def api_logs_clear() -> Response:
 def api_evidence() -> Response:
     from ..ai.tools import list_evidence
 
-    return jsonify({"result": list_evidence()})
+    try:
+        return jsonify({"result": list_evidence()})
+    except Exception:
+        logger.exception("Evidence list error")
+        return jsonify({"error": "Failed to load evidence index."}), 500
 
 
 @app.route("/api/chronology", methods=["GET"])
 def api_chronology() -> Response:
     from ..ai.tools import list_chronology
 
-    return jsonify({"result": list_chronology()})
+    try:
+        return jsonify({"result": list_chronology()})
+    except Exception:
+        logger.exception("Chronology list error")
+        return jsonify({"error": "Failed to load chronology."}), 500
 
 
 # ── runner ─────────────────────────────────────────────────────────────

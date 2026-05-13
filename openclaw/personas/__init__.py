@@ -8,11 +8,17 @@ from .base import Persona
 from .shennell import SHENNELL
 from .analyst import ANALYST
 from .builder import BUILDER
+from .strategist import STRATEGIST
+from .indexer import INDEXER
+from .executor import EXECUTOR
 
 _REGISTRY: Dict[str, Persona] = {
     "shennell": SHENNELL,
     "analyst": ANALYST,
     "builder": BUILDER,
+    "strategist": STRATEGIST,
+    "indexer": INDEXER,
+    "executor": EXECUTOR,
 }
 
 
@@ -26,4 +32,14 @@ def list_personas() -> Dict[str, Persona]:
     return dict(_REGISTRY)
 
 
-__all__ = ["Persona", "get_persona", "list_personas", "SHENNELL", "ANALYST", "BUILDER"]
+__all__ = [
+    "Persona",
+    "get_persona",
+    "list_personas",
+    "SHENNELL",
+    "ANALYST",
+    "BUILDER",
+    "STRATEGIST",
+    "INDEXER",
+    "EXECUTOR",
+]
