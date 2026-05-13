@@ -471,7 +471,26 @@ TOOL_SCHEMAS: List[Dict] = [
 
 
 def execute_tool(name: str, arguments: Dict[str, Any]) -> str:
-    """Execute a registered tool by name with the given arguments."""
+    """
+    Execute a registered tool by name with the given arguments.
+
+    Checks the control surface (skill enabled/disabled) and the safety gate
+    before executing. Both checks are enforced regardless of developer mode.
+    """
+    from ..control.safety import SafetyGate, SafetyViolation
+    from ..control.surface import get_surface
+
+    # Safety gate — hard rules (always enforced)
+    try:
+        SafetyGate.check_tool(name, arguments)
+    except SafetyViolation as exc:
+        return f"Safety violation: {exc}"
+
+    # Control surface — skill enable/disable
+    surface = get_surface()
+    if not surface.skill_allowed(name):
+        return f"Skill '{name}' is currently disabled on the control surface."
+
     func = _TOOL_FUNCTIONS.get(name)
     if func is None:
         return f"Unknown tool: {name!r}"
@@ -479,3 +498,11 @@ def execute_tool(name: str, arguments: Dict[str, Any]) -> str:
         return str(func(**arguments))
     except Exception as exc:
         return f"Tool execution error: {exc}"
+
+
+def active_tool_schemas() -> List[Dict]:
+    """Return only the tool schemas for currently-enabled skills."""
+    from ..control.surface import get_surface
+
+    surface = get_surface()
+    return [s for s in TOOL_SCHEMAS if surface.skill_allowed(s["function"]["name"])]

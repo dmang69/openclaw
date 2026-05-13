@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="logo">
+      <span class="logo-claw">⚡</span>
+      <span class="logo-text">OpenClaw</span>
+    </div>
+    <ul class="nav-list">
+      <li class="nav-item active" data-tab="chat">💬 Chat</li>
+      <li class="nav-item" data-tab="control">⚙️ Control Surface</li>
+      <li class="nav-item" data-tab="evidence">🗂️ Evidence</li>
+      <li class="nav-item" data-tab="chronology">🕐 Chronology</li>
+      <li class="nav-item" data-tab="logs">📋 Logs</li>
+      <li class="nav-item" data-tab="safety">🛡️ Safety</li>
+    </ul>
+    <div class="sidebar-footer">
+      <div class="status-badge" id="backend-badge">Local</div>
+      <div class="persona-badge" id="persona-badge">Shennell</div>
+    </div>
+  </nav>
+
+  <!-- ── Main Panel ── -->
+  <main class="main">
+
+    <!-- ── Chat Tab ── -->
+    <section class="tab active" id="tab-chat">
+      <div class="tab-header">
+        <h2>Chat</h2>
+        <div class="header-controls">
+          <select id="persona-select" class="select-input">
+            <option value="shennell">Shennell — Zero-Boundary</option>
+            <option value="analyst">Analyst — Structured</option>
+            <option value="builder">Builder — Practical</option>
+          </select>
+          <button class="btn btn-ghost" onclick="resetChat()">Reset</button>
+        </div>
+      </div>
+      <div class="chat-area" id="chat-area"></div>
+      <div class="chat-input-row">
+        <textarea id="chat-input" class="chat-input" rows="3"
+          placeholder="Type your message… (Enter to send, Shift+Enter for newline)"></textarea>
+        <button class="btn btn-primary" id="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </section>
+
+    <!-- ── Control Surface Tab ── -->
+    <section class="tab" id="tab-control">
+      <div class="tab-header">
+        <h2>Control Surface</h2>
+        <div class="header-controls">
+          <label class="mode-toggle">
+            <input type="checkbox" id="advanced-toggle" onchange="toggleAdvanced(this)">
+            <span class="mode-label">Advanced Mode</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="control-grid" id="control-grid">
+
+        <!-- Persona Controls -->
+        <div class="control-card">
+          <div class="card-header">
+            <span class="card-icon">🎭</span>
+            <h3>Persona Controls</h3>
+          </div>
+          <div class="control-rows">
+            <div class="control-row">
+              <label>Enforcement</label>
+              <label class="toggle"><input type="checkbox" data-path="persona.enforcement" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Speculation Block</label>
+              <label class="toggle"><input type="checkbox" data-path="persona.speculation_block" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Evidence-Only Mode</label>
+              <label class="toggle"><input type="checkbox" data-path="persona.evidence_only_mode"><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Emotional Content Block</label>
+              <label class="toggle"><input type="checkbox" data-path="persona.emotional_content_block" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row advanced-only hidden">
+              <label>Creativity Block</label>
+              <label class="toggle"><input type="checkbox" data-path="persona.creativity_block"><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Boundary Strictness</label>
+              <select class="select-sm" data-path="persona.boundary_strictness">
+                <option value="strict">Strict</option>
+                <option value="balanced">Balanced</option>
+                <option value="relaxed">Relaxed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agent Controls -->
+        <div class="control-card">
+          <div class="card-header">
+            <span class="card-icon">🤖</span>
+            <h3>Agent Controls</h3>
+          </div>
+          <div class="control-rows">
+            <div class="control-row">
+              <label>Auto-Routing</label>
+              <label class="toggle"><input type="checkbox" data-path="agents.auto_routing" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Shennell</label>
+              <label class="toggle"><input type="checkbox" data-path="agents.enabled.shennell" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Analyst</label>
+              <label class="toggle"><input type="checkbox" data-path="agents.enabled.analyst" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Builder</label>
+              <label class="toggle"><input type="checkbox" data-path="agents.enabled.builder" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row advanced-only hidden">
+              <label>Timeout (s)</label>
+              <input type="number" class="num-input" data-path="agents.timeout_seconds" value="30" min="5" max="300">
+            </div>
+          </div>
+        </div>
+
+        <!-- Skill Controls -->
+        <div class="control-card">
+          <div class="card-header">
+            <span class="card-icon">🔧</span>
+            <h3>Skill Controls</h3>
+          </div>
+          <div class="control-rows" id="skill-rows">
+            <!-- populated by JS -->
+          </div>
+        </div>
+
+        <!-- Determinism Controls -->
+        <div class="control-card advanced-only hidden">
+          <div class="card-header">
+            <span class="card-icon">🎯</span>
+            <h3>Determinism Controls</h3>
+          </div>
+          <div class="control-rows">
+            <div class="control-row">
+              <label>Mode</label>
+              <select class="select-sm" data-path="determinism.mode">
+                <option value="strict">Strict</option>
+                <option value="balanced">Balanced</option>
+                <option value="sandbox">Sandbox (dev)</option>
+              </select>
+            </div>
+            <div class="control-row">
+              <label>Reproducibility Enforcement</label>
+              <label class="toggle"><input type="checkbox" data-path="determinism.reproducibility_enforcement" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Hash Execution Locking</label>
+              <label class="toggle"><input type="checkbox" data-path="determinism.hash_execution_locking"><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evidence Controls -->
+        <div class="control-card">
+          <div class="card-header">
+            <span class="card-icon">🗂️</span>
+            <h3>Evidence Controls</h3>
+          </div>
+          <div class="control-rows">
+            <div class="control-row">
+              <label>Safe Mode (read-only)</label>
+              <label class="toggle"><input type="checkbox" data-path="evidence.safe_mode" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Chain-of-Custody</label>
+              <label class="toggle"><input type="checkbox" data-path="evidence.chain_of_custody_enforcement" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Metadata Extraction</label>
+              <label class="toggle"><input type="checkbox" data-path="evidence.metadata_extraction" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Chronology Inference</label>
+              <label class="toggle"><input type="checkbox" data-path="evidence.chronology_inference" checked><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logging Controls -->
+        <div class="control-card">
+          <div class="card-header">
+            <span class="card-icon">📋</span>
+            <h3>Logging Controls</h3>
+          </div>
+          <div class="control-rows">
+            <div class="control-row">
+              <label>Log Mode</label>
+              <select class="select-sm" data-path="logging.mode">
+                <option value="judicial">Judicial (full trace)</option>
+                <option value="standard" selected>Standard</option>
+                <option value="minimal">Minimal</option>
+              </select>
+            </div>
+            <div class="control-row">
+              <label>Export Enabled</label>
+              <label class="toggle"><input type="checkbox" data-path="logging.export_enabled" checked><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Include Tool Calls</label>
+              <label class="toggle"><input type="checkbox" data-path="logging.include_tool_calls" checked><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Execution Controls (advanced only) -->
+        <div class="control-card advanced-only hidden">
+          <div class="card-header">
+            <span class="card-icon">⚡</span>
+            <h3>Execution Controls</h3>
+          </div>
+          <div class="control-rows">
+            <div class="control-row">
+              <label>Step-Through Execution</label>
+              <label class="toggle"><input type="checkbox" data-path="execution.step_through"><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Developer Mode</label>
+              <label class="toggle"><input type="checkbox" data-path="execution.developer_mode"><span class="slider"></span></label>
+            </div>
+            <div class="control-row">
+              <label>Sandbox Mode</label>
+              <label class="toggle"><input type="checkbox" data-path="execution.sandbox_mode"><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /control-grid -->
+
+      <div class="save-row">
+        <button class="btn btn-primary" onclick="saveControl()">Save Settings</button>
+        <span class="save-status" id="save-status"></span>
+      </div>
+    </section>
+
+    <!-- ── Evidence Tab ── -->
+    <section class="tab" id="tab-evidence">
+      <div class="tab-header">
+        <h2>Evidence Index</h2>
+        <button class="btn btn-ghost" onclick="loadEvidence()">Refresh</button>
+      </div>
+      <pre class="mono-output" id="evidence-output">Loading…</pre>
+    </section>
+
+    <!-- ── Chronology Tab ── -->
+    <section class="tab" id="tab-chronology">
+      <div class="tab-header">
+        <h2>Chronology</h2>
+        <button class="btn btn-ghost" onclick="loadChronology()">Refresh</button>
+      </div>
+      <pre class="mono-output" id="chronology-output">Loading…</pre>
+    </section>
+
+    <!-- ── Logs Tab ── -->
+    <section class="tab" id="tab-logs">
+      <div class="tab-header">
+        <h2>System Logs</h2>
+        <div class="header-controls">
+          <select id="log-level-filter" class="select-input">
+            <option value="">All</option>
+            <option value="DEBUG">DEBUG</option>
+            <option value="INFO">INFO</option>
+            <option value="WARNING">WARNING</option>
+            <option value="ERROR">ERROR</option>
+          </select>
+          <button class="btn btn-ghost" onclick="loadLogs()">Refresh</button>
+          <button class="btn btn-danger" onclick="clearLogs()">Clear</button>
+        </div>
+      </div>
+      <div class="log-stream" id="log-stream"></div>
+    </section>
+
+    <!-- ── Safety Tab ── -->
+    <section class="tab" id="tab-safety">
+      <div class="tab-header">
+        <h2>Safety Architecture</h2>
+      </div>
+      <div class="safety-intro">
+        <p>The following rules are <strong>hard constraints</strong>. They are enforced at the
+           system level and cannot be disabled by any control surface setting,
+           including Developer Mode.</p>
+      </div>
+      <div class="safety-rules" id="safety-rules">Loading…</div>
+    </section>
+
+  </main>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

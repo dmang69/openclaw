@@ -12,7 +12,7 @@ from .backends.base import Backend, BackendResponse
 from .backends.local_backend import LocalBackend
 from .backends.openai_backend import OpenAIBackend
 from .memory import ConversationMemory
-from .tools import TOOL_SCHEMAS, execute_tool
+from .tools import active_tool_schemas, execute_tool
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +83,8 @@ class Agent:
         response_text = ""
 
         for iteration in range(self._max_iterations):
-            response: BackendResponse = self._backend.complete(messages, tools=TOOL_SCHEMAS)
+            tools = active_tool_schemas()
+            response: BackendResponse = self._backend.complete(messages, tools=tools or None)
 
             if response.has_tool_calls:
                 # Append assistant turn with tool call declarations
