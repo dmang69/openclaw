@@ -1,0 +1,78 @@
+name: Build Windows EXE
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    env:
+      ENTRYPOINT_OVERRIDE: ${{ vars.WINDOWS_ENTRYPOINT }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if (Test-Path requirements.txt) { pip install -r requirements.txt }
+          pip install pyinstaller
+
+      - name: Detect Python entrypoint
+        run: |
+          if ($env:ENTRYPOINT_OVERRIDE -and (Test-Path $env:ENTRYPOINT_OVERRIDE)) {
+            $entrypoint = Get-Item $env:ENTRYPOINT_OVERRIDE
+          } else {
+            $conventionalFiles = @("main.py", "app.py", "__main__.py")
+            foreach ($candidate in $conventionalFiles) {
+              if (Test-Path $candidate) {
+                $entrypoint = Get-Item $candidate
+                break
+              }
+            }
+          }
+          if (-not $entrypoint) {
+            $candidates = Get-ChildItem -Path . -Recurse -File -Filter "*.py" `
+              | Where-Object { $_.FullName -notmatch "\\(\.venv|venv|site-packages|tests?)\\" } `
+              | Sort-Object FullName
+            if ($candidates.Count -gt 1) {
+              $names = $candidates | ForEach-Object { $_.FullName }
+              Write-Error "Multiple Python files found. Set repository variable WINDOWS_ENTRYPOINT to choose one.`n$($names -join "`n")"
+              exit 1
+            }
+            $entrypoint = $candidates | Select-Object -First 1
+          }
+          if (-not $entrypoint) {
+            Write-Error "No Python entrypoint found. Add an entrypoint script before tagging a release."
+            exit 1
+          }
+          "ENTRYPOINT=$($entrypoint.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Build executable
+        run: |
+          pyinstaller --onefile --noconsole "$env:ENTRYPOINT"
+
+      - name: Generate SHA-256 hash file
+        run: |
+          Get-FileHash dist\*.exe -Algorithm SHA256 `
+            | ForEach-Object { "$($_.Hash.ToLower()) *$($_.Path | Split-Path -Leaf)" } `
+            | Set-Content dist\SHA256SUMS.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: |
+            dist/*.exe
+            dist/SHA256SUMS.txt

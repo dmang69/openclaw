@@ -1,0 +1,12 @@
+{
+  "theme": "dark",
+  "logging_mode": "judicial",
+  "default_persona": "shennell",
+  "evidence_viewer": {
+    "show_hashes": true,
+    "show_metadata": true
+  },
+  "agent_dashboard": {
+    "show_internal_state": false
+  }
+}
